@@ -1,0 +1,14 @@
+#!/bin/bash
+echo 'installing share command tool to ~/.share'
+mkdir ~/.share
+cp share ~/.share
+cp bash.rc ~/.share
+echo 'apply ~/.bashrc to ~/.zshrc'
+echo 'source ~/.share/bash.rc' >> ~/.zshrc
+echo ''
+echo 'reload ZSH or run:'
+echo '  source ~/.zshrc'
+echo 'if you want to delete, remove "source ~/.share/bash.rc" from ~/.zshrc, then:'
+echo '  rm -rf ~/.share'
+echo ''
+echo 'Done.'

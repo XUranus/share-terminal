@@ -1,0 +1,30 @@
+# ~/.share/bash.rc
+
+# share application auto complete function
+
+function _share() {
+    COMPREPLY=()
+    local cur=${COMP_WORDS[COMP_CWORD]};
+    local com=${COMP_WORDS[COMP_CWORD-1]};
+    case $com in
+    'share')
+        COMPREPLY=($(compgen -W 'ls d u help del' -- $cur))
+        ;;
+    'd')
+        local pro=($(awk '{print $1}' /tmp/share.list))
+        COMPREPLY=($(compgen -W "${pro[*]}" -- $cur)) #zsh
+        #COMPREPLY=($(compgen -W '${pro[@]}' -- $cur)) #bash
+        ;;
+    *)
+        ;;
+    esac
+    return 0
+}
+
+complete -F _share share
+
+# auto complete script end here
+
+# add path
+
+export PATH=$PATH:$HOME/.share

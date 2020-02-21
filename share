@@ -1,0 +1,79 @@
+#!/bin/bash
+
+url="https://share.whoisnian.com"
+localList="/tmp/share.list"
+
+function help() {
+  echo "Usage: share [option] <filename>"
+  echo "Options:"
+  echo "  sync: update local file list from server"
+  echo "    ls: show files from local list"
+  echo "     d: download file"
+  echo "     u: upload local file"
+  echo "   del: delete file from server"
+  echo "Example:"
+  echo "  share d myfile.txt"  
+}
+
+function _shareSync() {
+  echo "local file list synchronizing....."
+  (curl $url | \
+    xmllint --html --xpath \
+    '//a[@class="maxlen"]/text()' \
+    --noout  2>/dev/null - \
+  ) > $localList
+  echo "Done."
+}
+
+function _shareList() {
+  cat $localList
+}
+
+function _shareDownload() {
+  href=$url"/upload/"$1
+  echo "href: "$href
+  wget $href
+}
+
+function _shareDelete() {
+  echo "delete: "$1
+  curl -s $url"/index.php" \
+    -X POST \
+    -d "name="$1"&submit=delete" \
+    > /dev/null
+  _shareSync
+}
+
+function _shareUpload() {
+  echo "upload: "$1
+  curl \
+    -F "file[]=@"$1 \
+    -F "submit=upload" \
+    $url"/index.php" > /dev/null
+}
+
+if [[ $1 == "sync" ]]; then #synchronize list
+  _shareSync
+elif [[ $1 == "ls" ]]; then #local lost
+  _shareList
+elif [[ $1 == "d" ]]; then #download
+  if [[ $2 == "" ]]; then
+    echo "filename required"
+  else
+    _shareDownload $2
+  fi
+elif [[ $1 == "u" ]]; then
+  _shareUpload $2
+elif [[ $1 == "del" ]]; then
+  if [[ $2 == "" ]]; then
+    echo "filename required"
+  else
+    _shareDelete $2
+  fi
+elif [[ $1 == "help" ]]; then
+  help
+elif [[ $1 == "" ]]; then
+  help
+else
+  echo "unknown option: "$1" sh ,see usage:\"share help\""
+fi
