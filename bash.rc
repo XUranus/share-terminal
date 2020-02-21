@@ -8,14 +8,19 @@ function _share() {
     local com=${COMP_WORDS[COMP_CWORD-1]};
     case $com in
     'share')
-        COMPREPLY=($(compgen -W 'ls d u help del' -- $cur))
+        COMPREPLY=($(compgen -W 'sync ls d u help del' -- $cur))
         ;;
     'd')
         local pro=($(awk '{print $1}' /tmp/share.list))
-        COMPREPLY=($(compgen -W "${pro[*]}" -- $cur)) #zsh
-        #COMPREPLY=($(compgen -W '${pro[@]}' -- $cur)) #bash
+        COMPREPLY=($(compgen -W "${pro[*]}" -- $cur))
+        ;;
+    'del')
+        local pro=($(awk '{print $1}' /tmp/share.list))
+        COMPREPLY=($(compgen -W "${pro[*]}" -- $cur))
         ;;
     *)
+        local pro=($(ls))
+        COMPREPLY=($(compgen -W "${pro[*]}" -- $cur))
         ;;
     esac
     return 0

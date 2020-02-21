@@ -50,6 +50,8 @@ function _shareUpload() {
     -F "file[]=@"$1 \
     -F "submit=upload" \
     $url"/index.php" > /dev/null
+  echo 'upload Done.'
+  _shareSync
 }
 
 if [[ $1 == "sync" ]]; then #synchronize list
